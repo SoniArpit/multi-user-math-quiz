@@ -28,6 +28,8 @@ export default function QuizInterface({
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // get userId from local storage
+
   useEffect(() => {
     setAnswer("");
     setMessage("");
@@ -52,10 +54,6 @@ export default function QuizInterface({
 
     setIsSubmitting(true);
     const numAnswer = Number(answer);
-
-    console.log(
-      `QuizInterface: Submitting answer "${answer}" as number ${numAnswer}`
-    );
 
     if (isNaN(numAnswer)) {
       setMessage("Please enter a valid number");
@@ -151,7 +149,7 @@ export default function QuizInterface({
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-600">Loading question...</p>
+                <p className="text-xl text-gray-600">Answering...</p>
               </div>
             )}
           </div>

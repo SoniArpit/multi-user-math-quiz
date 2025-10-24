@@ -14,3 +14,11 @@ export interface HighScore {
   score: number;
   timestamp: Date;
 }
+
+export interface GameState {
+  currentQuestion: MathQuestion | null;
+  users: User[];
+  winner: User | null;
+  gameStatus: "waiting" | "active" | "scoring";
+  message: string;
+}
