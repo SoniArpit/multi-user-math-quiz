@@ -4,6 +4,7 @@ import { User } from "@/types/game";
 // Global state for users
 let users: User[] = [];
 let listeners: ((users: User[]) => void)[] = [];
+let channel: any = null; // Store the Supabase channel
 
 // Helper function to notify all listeners
 function notifyListeners() {
@@ -111,21 +112,24 @@ async function loadUsers() {
 function setupUserSubscription() {
   console.log("🔗 Setting up user subscription...");
 
-  supabase
-    .channel("users")
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "users",
-      },
-      async (payload) => {
-        console.log("📡 User change detected:", payload);
-        await loadUsers();
-      }
-    )
-    .subscribe();
+  // Only create channel if it doesn't exist
+  if (!channel) {
+    channel = supabase
+      .channel("users")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "users",
+        },
+        async (payload) => {
+          console.log("📡 User change detected:", payload);
+          await loadUsers();
+        }
+      )
+      .subscribe();
+  }
 }
 
 // Function 4: Subscribe to user changes
@@ -146,7 +150,16 @@ export function subscribeToUsers(listener: (users: User[]) => void) {
 // Function 5: Unsubscribe from user changes
 export function unsubscribeFromUsers(listener: (users: User[]) => void) {
   console.log("🔇 Unsubscribing from user changes...");
+
+  // Remove listener from local array
   listeners = listeners.filter((l) => l !== listener);
+
+  // If no more listeners, unsubscribe from Supabase channel
+  if (listeners.length === 0 && channel) {
+    console.log("🔌 No more listeners, unsubscribing from Supabase channel...");
+    channel.unsubscribe();
+    channel = null;
+  }
 }
 
 // Function 6: Get current users

@@ -4,6 +4,7 @@ import { generateMathQuestion, MathQuestion } from "./questionGenerator";
 // Global state for current question
 let currentQuestion: MathQuestion | null = null;
 let questionListeners: ((question: MathQuestion | null) => void)[] = [];
+let channel: any = null; // Store the Supabase channel
 
 // Helper function to notify all listeners
 function notifyQuestionListeners() {
@@ -103,21 +104,24 @@ async function loadCurrentQuestion() {
 function setupQuestionSubscription() {
   console.log("🔗 Setting up question subscription...");
 
-  supabase
-    .channel("questions")
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "questions",
-      },
-      async (payload) => {
-        console.log("📡 Question change detected:", payload);
-        await loadCurrentQuestion();
-      }
-    )
-    .subscribe();
+  // Only create channel if it doesn't exist
+  if (!channel) {
+    channel = supabase
+      .channel("questions")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "questions",
+        },
+        async (payload) => {
+          console.log("📡 Question change detected:", payload);
+          await loadCurrentQuestion();
+        }
+      )
+      .subscribe();
+  }
 }
 
 // Function 4: Subscribe to question changes
@@ -142,7 +146,16 @@ export function unsubscribeFromQuestions(
   listener: (question: MathQuestion | null) => void
 ) {
   console.log("🔇 Unsubscribing from question changes...");
+
+  // Remove listener from local array
   questionListeners = questionListeners.filter((l) => l !== listener);
+
+  // If no more listeners, unsubscribe from Supabase channel
+  if (questionListeners.length === 0 && channel) {
+    console.log("🔌 No more listeners, unsubscribing from Supabase channel...");
+    channel.unsubscribe();
+    channel = null;
+  }
 }
 
 // Function 6: Get current question

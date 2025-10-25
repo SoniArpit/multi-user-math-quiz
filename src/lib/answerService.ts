@@ -237,19 +237,3 @@ export async function getHighScores() {
     return [];
   }
 }
-
-// Function 4: Get current question ID
-async function getCurrentQuestionId(): Promise<string | null> {
-  try {
-    const { data: question } = await supabase
-      .from("questions")
-      .select("id")
-      .eq("is_active", true)
-      .single();
-
-    return question?.id || null;
-  } catch (error) {
-    console.error("❌ Error getting current question ID:", error);
-    return null;
-  }
-}

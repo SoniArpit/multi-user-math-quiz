@@ -3,6 +3,7 @@ import { supabase } from "./supabase";
 // Global state for notifications
 let notifications: string[] = [];
 let notificationListeners: ((notifications: string[]) => void)[] = [];
+let channel: any = null; // Store the Supabase channel
 
 // Helper function to notify all listeners
 function notifyListeners() {
@@ -48,28 +49,30 @@ export function subscribeToNotifications(
   notifyListeners();
 
   // Set up real-time subscription for notifications
-  supabase
-    .channel("notifications")
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "notifications",
-      },
-      (payload) => {
-        console.log("📡 New notification received:", payload);
-        const message = payload.new.message;
-        notifications = [message]; // Replace with latest notification
-        notifyListeners();
+  if (!channel) {
+    channel = supabase
+      .channel("notifications")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+        },
+        (payload) => {
+          console.log("📡 New notification received:", payload);
+          const message = payload.new.message;
+          notifications = [message]; // Replace with latest notification
+          notifyListeners();
 
-        // Auto-remove notification after 5 seconds
-        setTimeout(() => {
-          removeNotification(message);
-        }, 5000);
-      }
-    )
-    .subscribe();
+          // Auto-remove notification after 5 seconds
+          setTimeout(() => {
+            removeNotification(message);
+          }, 5000);
+        }
+      )
+      .subscribe();
+  }
 
   // Start with empty notifications
   listener(notifications);
@@ -80,7 +83,16 @@ export function unsubscribeFromNotifications(
   listener: (notifications: string[]) => void
 ) {
   console.log("🔇 Unsubscribing from notifications...");
+
+  // Remove listener from local array
   notificationListeners = notificationListeners.filter((l) => l !== listener);
+
+  // If no more listeners, unsubscribe from Supabase channel
+  if (notificationListeners.length === 0 && channel) {
+    console.log("🔌 No more listeners, unsubscribing from Supabase channel...");
+    channel.unsubscribe();
+    channel = null;
+  }
 }
 
 // Function 5: Get current notifications
