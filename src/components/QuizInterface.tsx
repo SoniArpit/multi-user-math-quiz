@@ -61,8 +61,14 @@ export default function QuizInterface({
       return;
     }
 
-    onAnswer(numAnswer);
-    setIsSubmitting(false);
+    try {
+      await onAnswer(numAnswer);
+    } finally {
+      // Keep submitting state for a bit to show the feedback
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 1000);
+    }
   };
 
   const getStatusMessage = () => {
@@ -132,9 +138,20 @@ export default function QuizInterface({
                         isSubmitting ||
                         !answer.trim()
                       }
-                      className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200"
+                      className={`w-full py-3 rounded-lg font-semibold transition-colors duration-200 ${
+                        isSubmitting
+                          ? "bg-blue-400 text-white cursor-wait"
+                          : "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      }`}
                     >
-                      {isSubmitting ? "Submitting..." : "Submit Answer"}
+                      {isSubmitting ? (
+                        <span className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                          Submitting...
+                        </span>
+                      ) : (
+                        "Submit Answer"
+                      )}
                     </button>
                   </form>
                 </div>
