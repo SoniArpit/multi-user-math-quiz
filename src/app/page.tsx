@@ -18,8 +18,6 @@ import { submitAnswer } from "@/lib/answerService";
 import {
   subscribeToNotifications,
   unsubscribeFromNotifications,
-  getCurrentNotifications,
-  clearNotificationsOnLoad,
 } from "@/lib/notificationService";
 
 export default function Home() {
@@ -60,10 +58,6 @@ export default function Home() {
       subscribeToUsers(handleUsersUpdate);
       subscribeToQuestions(handleQuestionUpdate);
       subscribeToNotifications(handleNotificationUpdate);
-
-      // Clear any existing notifications when joining
-      clearNotificationsOnLoad();
-      setNotifications([]);
 
       // Ensure there's an active question
       ensureActiveQuestion().catch((error) => {
@@ -151,7 +145,6 @@ export default function Home() {
         users={users}
         currentQuestion={currentQuestion}
         gameStatus={gameStatus}
-        winner={null}
         onAnswer={handleAnswer}
         message={message}
       />

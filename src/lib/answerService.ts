@@ -1,8 +1,5 @@
 import { supabase } from "./supabase";
-import {
-  markQuestionAnswered,
-  generateNewQuestionAfterWinner,
-} from "./questionService";
+import { generateNewQuestionAfterWinner } from "./questionService";
 import { updateUserScore } from "./userService";
 import { addNotification } from "./notificationService";
 
@@ -12,7 +9,7 @@ export interface AnswerResult {
   isWinner?: boolean;
 }
 
-// Function 1: Submit answer with atomic concurrency handling
+// Submit answer with atomic concurrency handling
 export async function submitAnswer(
   userId: string,
   answer: number
@@ -137,7 +134,7 @@ export async function submitAnswer(
   }
 }
 
-// Function 2: Update high scores
+// Update high scores
 async function updateHighScores(userId: string) {
   try {
     console.log("📊 Updating high scores...");
@@ -214,7 +211,7 @@ async function updateHighScores(userId: string) {
   }
 }
 
-// Function 3: Get high scores
+// Get high scores
 export async function getHighScores() {
   try {
     console.log("📊 Loading high scores...");

@@ -10,7 +10,6 @@ interface QuizInterfaceProps {
   users: User[];
   currentQuestion: MathQuestion | null;
   gameStatus: "waiting" | "active" | "scoring";
-  winner: User | null;
   onAnswer: (answer: number) => void;
   message?: string;
 }
@@ -20,7 +19,6 @@ export default function QuizInterface({
   users,
   currentQuestion,
   gameStatus,
-  winner,
   onAnswer,
   message: externalMessage,
 }: QuizInterfaceProps) {
@@ -35,12 +33,12 @@ export default function QuizInterface({
     setMessage("");
   }, [currentQuestion]);
 
-  useEffect(() => {
-    if (winner) {
-      setMessage(`${winner.username} got it right! +10 points`);
-      setTimeout(() => setMessage(""), 3000);
-    }
-  }, [winner]);
+  // useEffect(() => {
+  //     if (winner) {
+  //     setMessage(`${winner.username} got it right! +10 points`);
+  //     setTimeout(() => setMessage(""), 3000);
+  //   }
+  // }, [winner]);
 
   useEffect(() => {
     if (externalMessage) {

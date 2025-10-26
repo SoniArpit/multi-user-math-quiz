@@ -10,7 +10,7 @@ function notifyListeners() {
   notificationListeners.forEach((listener) => listener(notifications));
 }
 
-// Function 1: Add a global notification (broadcast to all players)
+// Add a global notification
 export async function addNotification(message: string) {
   console.log("📢 Broadcasting notification:", message);
 
@@ -31,13 +31,13 @@ export async function addNotification(message: string) {
   }
 }
 
-// Function 2: Remove a notification
+// Remove a notification
 export function removeNotification(message: string) {
   notifications = notifications.filter((n) => n !== message);
   notifyListeners();
 }
 
-// Function 3: Subscribe to notifications
+// Subscribe to notifications
 export function subscribeToNotifications(
   listener: (notifications: string[]) => void
 ) {
@@ -78,7 +78,7 @@ export function subscribeToNotifications(
   listener(notifications);
 }
 
-// Function 4: Unsubscribe from notifications
+// Unsubscribe from notifications
 export function unsubscribeFromNotifications(
   listener: (notifications: string[]) => void
 ) {
@@ -95,18 +95,7 @@ export function unsubscribeFromNotifications(
   }
 }
 
-// Function 5: Get current notifications
-export function getCurrentNotifications(): string[] {
-  return notifications;
-}
-
-// Function 6: Clear all notifications
-export function clearAllNotifications() {
-  notifications = [];
-  notifyListeners();
-}
-
-// Function 7: Clear notifications on page load
+// Clear notifications on page load
 export function clearNotificationsOnLoad() {
   console.log("🧹 Clearing notifications on page load...");
   notifications = [];

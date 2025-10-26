@@ -11,7 +11,7 @@ function notifyQuestionListeners() {
   questionListeners.forEach((listener) => listener(currentQuestion));
 }
 
-// Function 1: Generate and store new question
+// Generate new question
 export async function generateNewQuestion(): Promise<MathQuestion> {
   try {
     console.log("🎯 Generating new question...");
@@ -63,7 +63,7 @@ export async function generateNewQuestion(): Promise<MathQuestion> {
   }
 }
 
-// Function 2: Load current active question
+// Load current question
 async function loadCurrentQuestion() {
   try {
     console.log("📥 Loading current question...");
@@ -100,7 +100,7 @@ async function loadCurrentQuestion() {
   }
 }
 
-// Function 3: Set up real-time subscription for questions
+// Set up question subscription
 function setupQuestionSubscription() {
   console.log("🔗 Setting up question subscription...");
 
@@ -124,7 +124,7 @@ function setupQuestionSubscription() {
   }
 }
 
-// Function 4: Subscribe to question changes
+// Subscribe to questions
 export function subscribeToQuestions(
   listener: (question: MathQuestion | null) => void
 ) {
@@ -141,7 +141,7 @@ export function subscribeToQuestions(
   loadCurrentQuestion();
 }
 
-// Function 5: Unsubscribe from question changes
+// Unsubscribe from questions
 export function unsubscribeFromQuestions(
   listener: (question: MathQuestion | null) => void
 ) {
@@ -158,12 +158,7 @@ export function unsubscribeFromQuestions(
   }
 }
 
-// Function 6: Get current question
-export function getCurrentQuestion(): MathQuestion | null {
-  return currentQuestion;
-}
-
-// Function 7: Ensure there's an active question (used when joining game)
+// Ensure active question
 export async function ensureActiveQuestion(): Promise<MathQuestion> {
   try {
     console.log("🔍 Ensuring active question...");
@@ -199,37 +194,7 @@ export async function ensureActiveQuestion(): Promise<MathQuestion> {
   }
 }
 
-// Function 8: Mark question as answered by winner
-export async function markQuestionAnswered(
-  questionId: string,
-  winnerId: string
-): Promise<boolean> {
-  try {
-    console.log(`🏆 Marking question ${questionId} as answered by ${winnerId}`);
-
-    const { error } = await supabase
-      .from("questions")
-      .update({
-        winner_id: winnerId,
-        is_active: false,
-      })
-      .eq("id", questionId)
-      .eq("is_active", true); // Only update if still active
-
-    if (error) {
-      console.error("❌ Error marking question as answered:", error);
-      return false;
-    }
-
-    console.log("✅ Question marked as answered");
-    return true;
-  } catch (error) {
-    console.error("❌ Error marking question as answered:", error);
-    return false;
-  }
-}
-
-// Function 9: Generate new question after winner (called automatically)
+// Generate new question after winner
 export async function generateNewQuestionAfterWinner(): Promise<void> {
   try {
     console.log("🎯 Generating new question after winner...");

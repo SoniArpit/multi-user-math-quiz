@@ -11,7 +11,7 @@ function notifyListeners() {
   listeners.forEach((listener) => listener(users));
 }
 
-// Function 1: Join Game - Create or get user
+// Join Game - Create or get user
 export async function joinGame(username: string): Promise<User> {
   try {
     console.log(`🔍 Joining game as: ${username}`);
@@ -75,7 +75,7 @@ export async function joinGame(username: string): Promise<User> {
   }
 }
 
-// Function 2: Load all users from database
+// Load all users from database
 async function loadUsers() {
   try {
     console.log("📥 Loading users from database...");
@@ -108,7 +108,7 @@ async function loadUsers() {
   }
 }
 
-// Function 3: Set up real-time subscription for users
+// Set up real-time subscription for users
 function setupUserSubscription() {
   console.log("🔗 Setting up user subscription...");
 
@@ -132,7 +132,7 @@ function setupUserSubscription() {
   }
 }
 
-// Function 4: Subscribe to user changes
+// Subscribe to user changes
 export function subscribeToUsers(listener: (users: User[]) => void) {
   console.log("👂 Subscribing to user changes...");
   listeners.push(listener);
@@ -147,7 +147,7 @@ export function subscribeToUsers(listener: (users: User[]) => void) {
   loadUsers();
 }
 
-// Function 5: Unsubscribe from user changes
+// Unsubscribe from user changes
 export function unsubscribeFromUsers(listener: (users: User[]) => void) {
   console.log("🔇 Unsubscribing from user changes...");
 
@@ -162,12 +162,7 @@ export function unsubscribeFromUsers(listener: (users: User[]) => void) {
   }
 }
 
-// Function 6: Get current users
-export function getCurrentUsers(): User[] {
-  return users;
-}
-
-// Function 7: Update user score
+// Update user score
 export async function updateUserScore(
   userId: string,
   scoreIncrement: number
